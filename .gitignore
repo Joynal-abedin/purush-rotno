@@ -1,0 +1,11 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+# Keep uploaded images in git repository for GitHub and Cloudflare Pages
+!public/uploads/
+!public/uploads/**

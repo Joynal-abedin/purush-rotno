@@ -1,0 +1,107 @@
+{
+  "products": [
+    {
+      "id": "prod-rotno-combo",
+      "name": "পুরুষ রত্ন হালুয়া + পাওয়ার অয়েল (Ginseng Power Oil)",
+      "subtitle": "প্রিমিয়াম ভেষজ ফর্মুলা কম্বো প্যাক — হালুয়া ৫০০ গ্রাম + পাওয়ার অয়েল ১০০ মিলি",
+      "regularPrice": 1990,
+      "offerPrice": 1290,
+      "description": "শতভাগ খাঁটি ও প্রাকৃতিক উপাদানের সমন্বয়ে প্রস্তুত হেলথ গুড পুরুষ রত্ন হালুয়া (৫০০ গ্রাম) এবং অরিজিনাল জিনসিং পাওয়ার অয়েল। প্রাত্যহিক ক্লান্তি দূর করে শারীরিক শক্তি, সতেজতা ও আত্মবিশ্বাস ফিরিয়ে আনার এক নির্ভরযোগ্য হারবাল কম্বো সলিউশন।",
+      "details": [
+        "খাঁটি সুন্দরবনের মধু, জাফরান, শিমুল মূল ও অশ্বগন্ধা সমন্বিত পুষ্টিকর হালুয়া",
+        "কালোজিরা, আমলকী, তালমাখনা ও কাতিলা গামের সমৃদ্ধ প্রাকৃতিক পুষ্টি উপাদান",
+        "বাহ্যিক ব্যবহারের জন্য প্রস্তুত বিশেষ ভেষজ নির্যাসযুক্ত নাইট কিং ম্যাসাজ অয়েল",
+        "সম্পূর্ণ প্রাকৃতিক ফর্মুলা — ক্ষতিকর কেমিক্যাল বা কৃত্রিম স্টিমুলেটিং উপাদান মুক্ত",
+        "কোনো পার্শ্বপ্রতিক্রিয়া ছাড়া প্রাকৃতিক শক্তি ও স্ট্যামিনা বৃদ্ধির সহায়ক"
+      ],
+      "usage": [
+        "পুরুষ রত্ন হালুয়া: প্রতিদিন রাতে খাবারের ৩০ মিনিট পর ১ চা চামচ পরিমাণ কুসুম গরম দুধ অথবা পানির সাথে সেব্য।",
+        "ম্যাসাজ অয়েল: রাতে ঘুমানোর পূর্বে ৪-৫ ফোঁটা অয়েল নিয়ে আলতো হাতে ২-৩ মিনিট হালকা ম্যাসাজ করুন (শুধুমাত্র বাহ্যিক ব্যবহারের জন্য)।",
+        "সংরক্ষণ পদ্ধতি: সরাসরি রোদ ও আর্দ্রতা এড়িয়ে ঠাণ্ডা ও ছায়াযুক্ত স্থানে স্বাভাবিক তাপমাত্রায় সংরক্ষণ করুন।"
+      ],
+      "images": [
+        "/uploads/purush_rotno_combo.jpg"
+      ],
+      "inStock": true,
+      "isPublished": true,
+      "createdAt": "2026-10-14T17:18:18.583Z",
+      "updatedAt": "2026-10-14T17:18:18.583Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord-1792077864410-6",
+      "orderNumber": "PR-261015-8030",
+      "productId": "prod-rotno-combo",
+      "productName": "পুরুষ রত্ন হালুয়া + পাওয়ার অয়েল (Ginseng Power Oil)",
+      "quantity": 3,
+      "unitPrice": 1290,
+      "deliveryLocation": "dhaka",
+      "deliveryFee": 70,
+      "totalAmount": 3940,
+      "customerName": "hhjkjj",
+      "phone": "01798866546",
+      "address": "jklguigjo",
+      "status": "Pending",
+      "paymentMethod": "Cash on Delivery",
+      "createdAt": "2026-10-15T15:24:24.410Z",
+      "updatedAt": "2026-10-15T15:24:24.410Z"
+    },
+    {
+      "id": "ord-1792001797734-496",
+      "orderNumber": "PR-261014-7621",
+      "productId": "prod-rotno-combo",
+      "productName": "পুরুষ রত্ন হালুয়া + Figure Care Night King Massage Oil",
+      "quantity": 2,
+      "unitPrice": 1290,
+      "deliveryLocation": "dhaka",
+      "deliveryFee": 70,
+      "totalAmount": 2650,
+      "customerName": "তানভীর হাসান",
+      "phone": "01886338934",
+      "address": "বনানী, ঢাকা",
+      "status": "Pending",
+      "paymentMethod": "Cash on Delivery",
+      "createdAt": "2026-10-14T18:16:37.735Z",
+      "updatedAt": "2026-10-14T18:16:37.735Z"
+    },
+    {
+      "id": "ord-1791998317464-747",
+      "orderNumber": "PR-261014-4972",
+      "productId": "prod-rotno-combo",
+      "productName": "পুরুষ রত্ন হালুয়া + Figure Care Night King Massage Oil",
+      "quantity": 1,
+      "unitPrice": 1290,
+      "deliveryLocation": "dhaka",
+      "deliveryFee": 70,
+      "totalAmount": 1360,
+      "customerName": "মোঃ জহিরুল ইসলাম",
+      "phone": "01711223344",
+      "address": "বাড়ি #১২, রোড #৫, ধানমন্ডি, ঢাকা",
+      "status": "Pending",
+      "paymentMethod": "Cash on Delivery",
+      "createdAt": "2026-10-14T17:18:37.464Z",
+      "updatedAt": "2026-10-14T17:18:37.464Z"
+    }
+  ],
+  "settings": {
+    "brandName": "পুরুষ রত্ন (Purush Rotno)",
+    "hotline": "01886338934",
+    "whatsapp": "01886338934",
+    "email": "etishamoni1@gmail.com",
+    "deliveryDhaka": 70,
+    "deliveryOutside": 130,
+    "gtmId": "",
+    "noticeText": "সীমিত সময়ের স্পেশাল অফার! ক্যাশ অন হোম ডেলিভারিতে পণ্য বুঝে পেয়ে মূল্য পরিশোধ করুন।",
+    "guaranteeText": "১০০% খাঁটি ভেষজ উপাদান • পার্সেল চেক করে গ্রহণের সুযোগ • কোনো আগাম পেমেন্ট নেই",
+    "footerAddress": "মতিঝিল বাণিজ্যিক এলাকা, ঢাকা-১০০০, বাংলাদেশ"
+  },
+  "admins": [
+    {
+      "id": "admin-1",
+      "username": "admin",
+      "passwordHash": "$2b$10$xFt9D6oskJaDvklBIGQZ1OerRxQvpd5df3fKcEl5A4lKMiyMwNSV.",
+      "createdAt": "2026-10-14T17:18:18.692Z"
+    }
+  ]
+}
