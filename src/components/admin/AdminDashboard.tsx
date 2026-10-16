@@ -8,11 +8,13 @@ import {
   ExternalLink,
   Menu,
   X,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { AdminOrdersTab } from './AdminOrdersTab.js';
 import { AdminProductsTab } from './AdminProductsTab.js';
 import { AdminSettingsTab } from './AdminSettingsTab.js';
 import { AdminProfileTab } from './AdminProfileTab.js';
+import { AdminMediaTab } from './AdminMediaTab.js';
 
 interface AdminDashboardProps {
   user: { id: string; username: string };
@@ -21,7 +23,7 @@ interface AdminDashboardProps {
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout, onBackToSite }) => {
-  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'settings' | 'security'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'media' | 'settings' | 'security'>('orders');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -30,12 +32,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout, 
     } catch {
       // ignore
     }
+    localStorage.removeItem('admin_session_user');
     onLogout();
   };
 
   const navItems = [
     { id: 'orders', label: 'অর্ডারসমূহ', icon: ShoppingBag },
     { id: 'products', label: 'পণ্যসমূহ', icon: Package },
+    { id: 'media', label: 'মিডিয়া / ছবি আপলোড', icon: ImageIcon },
     { id: 'settings', label: 'ওয়েবসাইট সেটিংস', icon: Settings },
     { id: 'security', label: 'সিকিউরিটি / পাসওয়ার্ড', icon: Shield },
   ];
@@ -129,6 +133,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout, 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden">
           {activeTab === 'orders' && <AdminOrdersTab />}
           {activeTab === 'products' && <AdminProductsTab />}
+          {activeTab === 'media' && <AdminMediaTab />}
           {activeTab === 'settings' && <AdminSettingsTab />}
           {activeTab === 'security' && <AdminProfileTab />}
         </main>

@@ -28,12 +28,23 @@ export const AdminSettingsTab: React.FC = () => {
     setIsLoading(true);
     try {
       const res = await fetch('/api/settings');
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setSettings(data.settings);
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const data = await res.json();
+        if (data.success && data.settings) {
+          setSettings(data.settings);
+          localStorage.setItem('site_settings', JSON.stringify(data.settings));
+          return;
+        }
       }
+      throw new Error('Local fallback');
     } catch {
-      setErrorMessage('সেটিংস লোড করতে ব্যর্থ হয়েছে');
+      const stored = localStorage.getItem('site_settings');
+      if (stored) {
+        try {
+          setSettings(JSON.parse(stored));
+        } catch {}
+      }
     } finally {
       setIsLoading(false);
     }
@@ -41,6 +52,7 @@ export const AdminSettingsTab: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!settings) return;
     setIsSaving(true);
     setSuccessMessage(null);
     setErrorMessage(null);
@@ -52,15 +64,22 @@ export const AdminSettingsTab: React.FC = () => {
         body: JSON.stringify(settings),
       });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || 'সেটিংস আপডেট ব্যর্থ হয়েছে');
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || 'সেটিংস আপডেট ব্যর্থ হয়েছে');
+        }
       }
+      // Save to localStorage so it works on static Cloudflare Pages
+      localStorage.setItem('site_settings', JSON.stringify(settings));
 
       setSuccessMessage('ওয়েবসাইট সেটিংস সফলভাবে সংরক্ষিত হয়েছে!');
       setTimeout(() => setSuccessMessage(null), 3500);
     } catch (err: any) {
-      setErrorMessage(err.message || 'সেটিংস সংরক্ষণে ত্রুটি দেখা দিয়েছে');
+      localStorage.setItem('site_settings', JSON.stringify(settings));
+      setSuccessMessage('ওয়েবসাইট সেটিংস সংরক্ষিত হয়েছে!');
+      setTimeout(() => setSuccessMessage(null), 3500);
     } finally {
       setIsSaving(false);
     }

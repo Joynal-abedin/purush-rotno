@@ -6,6 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+# Ignore bun lock to force Cloudflare Pages to use standard npm install
+bun.lock*
+
 # Keep uploaded images in git repository for GitHub and Cloudflare Pages
 !public/uploads/
 !public/uploads/**

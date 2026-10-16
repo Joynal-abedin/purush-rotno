@@ -75,18 +75,55 @@ export const AdminOrdersTab: React.FC = () => {
       });
 
       const res = await fetch(`/api/admin/orders?${queryParams.toString()}`);
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        setOrders(data.orders);
-        setCurrentPage(data.currentPage);
-        setTotalPages(data.totalPages || 1);
-        if (data.stats) {
-          setStats(data.stats);
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const data = await res.json();
+        if (data.success) {
+          setOrders(data.orders);
+          setCurrentPage(data.currentPage);
+          setTotalPages(data.totalPages || 1);
+          if (data.stats) {
+            setStats(data.stats);
+          }
+          return;
         }
       }
-    } catch (err) {
-      console.error('Failed to fetch orders:', err);
+      throw new Error('Fallback to local orders');
+    } catch {
+      // Static Cloudflare Pages fallback: retrieve orders from localStorage
+      try {
+        const stored = localStorage.getItem('site_orders');
+        let list: Order[] = stored ? JSON.parse(stored) : [];
+
+        if (statusFilter !== 'all') {
+          list = list.filter(o => o.status === statusFilter);
+        }
+        if (search.trim()) {
+          const q = search.trim().toLowerCase();
+          list = list.filter(o =>
+            o.customerName.toLowerCase().includes(q) ||
+            o.phone.includes(q) ||
+            o.orderNumber.toLowerCase().includes(q)
+          );
+        }
+
+        setOrders(list);
+        setCurrentPage(1);
+        setTotalPages(1);
+
+        const allStored = localStorage.getItem('site_orders');
+        const allList: Order[] = allStored ? JSON.parse(allStored) : [];
+        setStats({
+          total: allList.length,
+          pending: allList.filter(o => o.status === 'Pending').length,
+          confirmed: allList.filter(o => o.status === 'Confirmed').length,
+          processing: allList.filter(o => o.status === 'Processing').length,
+          shipped: allList.filter(o => o.status === 'Shipped').length,
+          delivered: allList.filter(o => o.status === 'Delivered').length,
+          cancelled: allList.filter(o => o.status === 'Cancelled').length,
+          revenue: allList.reduce((sum, o) => sum + (o.totalAmount || 0), 0),
+        });
+      } catch {}
     } finally {
       setIsLoading(false);
     }
@@ -108,19 +145,34 @@ export const AdminOrdersTab: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        // Update local state
-        setOrders(prev => prev.map(o => (o.id === orderId ? data.order : o)));
-        if (selectedOrder && selectedOrder.id === orderId) {
-          setSelectedOrder(data.order);
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const data = await res.json();
+        if (data.success) {
+          setOrders(prev => prev.map(o => (o.id === orderId ? data.order : o)));
+          if (selectedOrder && selectedOrder.id === orderId) {
+            setSelectedOrder(data.order);
+          }
+          fetchOrders(currentPage);
+          return;
         }
-        // Refresh stats
-        fetchOrders(currentPage);
       }
-    } catch (err) {
-      console.error('Failed to update status:', err);
+    } catch {
+      // Local fallback
     }
+
+    try {
+      const stored = localStorage.getItem('site_orders');
+      if (stored) {
+        const list: Order[] = JSON.parse(stored);
+        const updated = list.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
+        localStorage.setItem('site_orders', JSON.stringify(updated));
+        setOrders(prev => prev.map(o => (o.id === orderId ? { ...o, status: newStatus } : o)));
+        if (selectedOrder && selectedOrder.id === orderId) {
+          setSelectedOrder({ ...selectedOrder, status: newStatus });
+        }
+      }
+    } catch {}
   };
 
   const handleDeleteOrder = async () => {
@@ -130,14 +182,29 @@ export const AdminOrdersTab: React.FC = () => {
       const res = await fetch(`/api/admin/orders/${orderToDelete.id}`, {
         method: 'DELETE',
       });
-      const data = await res.json();
-      if (res.ok && data.success) {
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const data = await res.json();
+        if (data.success) {
+          setOrderToDelete(null);
+          fetchOrders(currentPage);
+          return;
+        }
+      }
+    } catch {
+      // Local fallback
+    }
+
+    try {
+      const stored = localStorage.getItem('site_orders');
+      if (stored) {
+        const list: Order[] = JSON.parse(stored);
+        const updated = list.filter(o => o.id !== orderToDelete.id);
+        localStorage.setItem('site_orders', JSON.stringify(updated));
         setOrderToDelete(null);
         fetchOrders(currentPage);
       }
-    } catch (err) {
-      console.error('Failed to delete order:', err);
-    } finally {
+    } catch {} finally {
       setActionLoading(false);
     }
   };

@@ -39,9 +39,25 @@ export const AdminProfileTab: React.FC = () => {
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || 'আপডেট করতে ব্যর্থ হয়েছে');
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || 'আপডেট করতে ব্যর্থ হয়েছে');
+        }
+      } else {
+        // Static hosting fallback
+        const savedPass = localStorage.getItem('admin_auth_pass') || 'admin123';
+        if (currentPassword !== savedPass) {
+          throw new Error('বর্তমান পাসওয়ার্ড সঠিক নয়');
+        }
+      }
+
+      if (newUsername.trim()) {
+        localStorage.setItem('admin_auth_user', newUsername.trim());
+      }
+      if (newPassword) {
+        localStorage.setItem('admin_auth_pass', newPassword);
       }
 
       setSuccess('এডমিন ক্রেডেনশিয়াল সফলভাবে আপডেট হয়েছে!');

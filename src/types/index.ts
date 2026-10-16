@@ -43,6 +43,7 @@ export interface SiteSettings {
   email?: string;
   deliveryDhaka: number;
   deliveryOutside: number;
+  freeDeliveryThreshold?: number;
   gtmId: string;
   noticeText: string;
   guaranteeText: string;

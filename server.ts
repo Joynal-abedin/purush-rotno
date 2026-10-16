@@ -403,7 +403,7 @@ app.post('/api/admin/products', requireAdmin, (req: Request, res: Response) => {
       description: description ? description.trim() : '',
       details: Array.isArray(details) ? details : [],
       usage: Array.isArray(usage) ? usage : [],
-      images: Array.isArray(images) && images.length > 0 ? images : ['/uploads/purush_rotno_combo.jpg'],
+      images: Array.isArray(images) ? images : [],
       inStock: inStock !== false,
       isPublished: isPublished !== false,
     });
@@ -453,7 +453,7 @@ app.put('/api/admin/settings', requireAdmin, (req: Request, res: Response) => {
 });
 
 // Image upload endpoint
-app.post('/api/admin/upload', requireAdmin, upload.single('image'), (req: Request, res: Response) => {
+app.post('/api/admin/upload', requireAdmin, upload.single('image') as any, (req: Request, res: Response) => {
   try {
     if (!req.file) {
       res.status(400).json({ success: false, message: 'কোনো ছবি আপলোড করা হয়নি' });

@@ -57,6 +57,9 @@ const DEFAULT_SETTINGS: SiteSettings = {
   deliveryDhaka: 70,
   deliveryOutside: 130,
   freeDeliveryThreshold: 2,
+  gtmId: '',
+  noticeText: 'সীমিত সময়ের স্পেশাল অফার! ক্যাশ অন হোম ডেলিভারিতে পণ্য বুঝে পেয়ে মূল্য পরিশোধ করুন।',
+  guaranteeText: '১০০% খাঁটি ভেষজ উপাদান • পার্সেল চেক করে গ্রহণের সুযোগ • কোনো আগাম পেমেন্ট নেই',
   footerAddress: 'মতিঝিল বাণিজ্যিক এলাকা, ঢাকা-১০০০, বাংলাদেশ',
 };
 
@@ -86,15 +89,30 @@ export default function App() {
     const checkAuth = async () => {
       try {
         const res = await fetch('/api/auth/me');
-        const data = await res.json();
-        if (res.ok && data.success && data.user) {
-          setAdminUser(data.user);
+        if (res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            if (data.success && data.user) {
+              setAdminUser(data.user);
+              setIsCheckingAuth(false);
+              return;
+            }
+          }
         }
       } catch {
-        // Not authenticated
-      } finally {
-        setIsCheckingAuth(false);
+        // Not authenticated on server
       }
+
+      // Check localStorage fallback for Cloudflare Pages static hosting
+      try {
+        const localSession = localStorage.getItem('admin_session_user');
+        if (localSession) {
+          setAdminUser(JSON.parse(localSession));
+        }
+      } catch {}
+
+      setIsCheckingAuth(false);
     };
     checkAuth();
   }, []);
@@ -122,20 +140,46 @@ export default function App() {
         ]);
 
         if (prodRes && prodRes.ok) {
-          const prodData = await prodRes.json();
-          if (prodData.success && prodData.products && prodData.products.length > 0) {
-            setProducts(prodData.products);
-            trackViewItem(prodData.products[0]);
+          const contentType = prodRes.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const prodData = await prodRes.json();
+            if (prodData.success && prodData.products && prodData.products.length > 0) {
+              setProducts(prodData.products);
+              localStorage.setItem('custom_products', JSON.stringify(prodData.products));
+              trackViewItem(prodData.products[0]);
+            }
+          }
+        } else {
+          const savedProds = localStorage.getItem('custom_products');
+          if (savedProds) {
+            try {
+              const list = JSON.parse(savedProds);
+              if (Array.isArray(list) && list.length > 0) {
+                setProducts(list);
+                trackViewItem(list[0]);
+              }
+            } catch {}
           }
         }
 
         if (setRes && setRes.ok) {
-          const setData = await setRes.json();
-          if (setData.success && setData.settings) {
-            setSettings(setData.settings);
-            if (setData.settings.gtmId) {
-              initGTM(setData.settings.gtmId);
+          const contentType = setRes.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const setData = await setRes.json();
+            if (setData.success && setData.settings) {
+              setSettings(setData.settings);
+              if (setData.settings.gtmId) {
+                initGTM(setData.settings.gtmId);
+              }
             }
+          }
+        } else {
+          const savedSet = localStorage.getItem('site_settings');
+          if (savedSet) {
+            try {
+              const parsed = JSON.parse(savedSet);
+              if (parsed) setSettings(parsed);
+            } catch {}
           }
         }
       } catch (err) {
