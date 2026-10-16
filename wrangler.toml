@@ -1,0 +1,8 @@
+name = "purush-rotno-worker"
+main = "server.ts"
+compatibility_date = "2026-10-16"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "purush-rotno-db"
+database_id = "9f666e23-192f-4da3-8cda-d8af4f7540b6"
