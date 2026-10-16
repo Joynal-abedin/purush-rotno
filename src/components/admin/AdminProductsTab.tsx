@@ -35,7 +35,7 @@ export const AdminProductsTab: React.FC = () => {
     description: '',
     detailsText: '',
     usageText: '',
-    images: [] as string[],
+    images: ['/uploads/purush_rotno_combo.jpg'],
     inStock: true,
     isPublished: true,
   });
@@ -77,7 +77,7 @@ export const AdminProductsTab: React.FC = () => {
       description: prod.description,
       detailsText: (prod.details || []).join('\n'),
       usageText: (prod.usage || []).join('\n'),
-      images: prod.images || [],
+      images: prod.images && prod.images.length > 0 ? prod.images : ['/uploads/purush_rotno_combo.jpg'],
       inStock: prod.inStock,
       isPublished: prod.isPublished,
     });
@@ -95,7 +95,7 @@ export const AdminProductsTab: React.FC = () => {
       description: '',
       detailsText: '',
       usageText: '',
-      images: [],
+      images: ['/uploads/purush_rotno_combo.jpg'],
       inStock: true,
       isPublished: true,
     });
@@ -272,7 +272,7 @@ export const AdminProductsTab: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...product,
-          images: updatedImages,
+          images: updatedImages.length > 0 ? updatedImages : ['/uploads/purush_rotno_combo.jpg'],
         }),
       });
       if (res.ok) {
@@ -295,21 +295,33 @@ export const AdminProductsTab: React.FC = () => {
   };
 
   const handleQuickRemoveDemoImages = async (product: Product) => {
+    const isDemo = (img: string) =>
+      img.includes('purush_rotno_combo') ||
+      img.includes('purush_rotno_halua') ||
+      img.includes('figure_care');
+
+    const nonDemo = (product.images || []).filter(img => !isDemo(img));
+    if (nonDemo.length === 0) {
+      setQuickMessage('সতর্কতা: অনুগ্রহ করে আগে আপনার নিজস্ব অন্তত একটি নতুন ছবি আপলোড করুন। তারপর ডেমো ছবি মুছতে পারবেন।');
+      setTimeout(() => setQuickMessage(null), 4000);
+      return;
+    }
+
     try {
       const res = await fetch(`/api/admin/products/${product.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...product,
-          images: [],
+          images: nonDemo,
         }),
       });
       if (res.ok) {
-        setQuickMessage('সব ইমেজ সফলভাবে রিমুভ করা হয়েছে! পরবর্তীতে নতুন ছবি আপলোড করলে লাইভ হবে।');
+        setQuickMessage('সব ডেমো ছবি সফলভাবে সরানো হয়েছে! এখন শুধুমাত্র আপনার আপলোড করা ছবি লাইভ রয়েছে।');
         fetchProducts();
       }
     } catch {
-      setQuickMessage('ইমেজ রিমুভ করতে সমস্যা হয়েছে');
+      setQuickMessage('ডেমো ছবি সরাতে সমস্যা হয়েছে');
     }
     setTimeout(() => setQuickMessage(null), 4000);
   };
@@ -332,7 +344,7 @@ export const AdminProductsTab: React.FC = () => {
       description: formData.description.trim(),
       details: formData.detailsText.split('\n').map(s => s.trim()).filter(Boolean),
       usage: formData.usageText.split('\n').map(s => s.trim()).filter(Boolean),
-      images: formData.images || [],
+      images: formData.images.length > 0 ? formData.images : ['/uploads/purush_rotno_combo.jpg'],
       inStock: formData.inStock,
       isPublished: formData.isPublished,
     };
@@ -467,16 +479,7 @@ export const AdminProductsTab: React.FC = () => {
               <span className="text-[11px] text-stone-400">স্টার (★) চিহ্নিত ছবিটি হোমপেজের প্রধান কভার</span>
             </div>
 
-            {(!products[0].images || products[0].images.length === 0) ? (
-              <div className="p-8 rounded-2xl bg-black/40 border border-dashed border-amber-500/30 text-center space-y-2">
-                <ImageIcon className="w-10 h-10 text-amber-400/60 mx-auto" />
-                <p className="text-sm font-semibold text-stone-200">বর্তমানে ওয়েবসাইটে কোনো প্রোডাক্ট ছবি নেই</p>
-                <p className="text-xs text-stone-400 max-w-md mx-auto">
-                  পরবর্তীতে উপরের <strong className="text-amber-300">"নতুন ছবি আপলোড করুন"</strong> বাটনে ক্লিক করে ছবি আপলোড করলেই তা স্বয়ংক্রিয়ভাবে পুরো ওয়েবসাইটে বসে যাবে।
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {(products[0].images || []).map((img, idx) => (
                 <div
                   key={idx}
@@ -581,16 +584,12 @@ export const AdminProductsTab: React.FC = () => {
             className="p-4 sm:p-5 rounded-2xl bg-[#062319] border border-amber-500/25 flex flex-col justify-between space-y-4"
           >
             <div className="flex gap-4">
-              <div className="w-24 h-24 rounded-xl overflow-hidden border border-amber-500/30 shrink-0 bg-black/40 flex items-center justify-center">
-                {p.images?.[0] ? (
-                  <img
-                    src={p.images[0]}
-                    alt={p.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <Sparkles className="w-8 h-8 text-amber-400/70" />
-                )}
+              <div className="w-24 h-24 rounded-xl overflow-hidden border border-amber-500/30 shrink-0 bg-black/40">
+                <img
+                  src={p.images?.[0] || '/uploads/purush_rotno_combo.jpg'}
+                  alt={p.name}
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               <div className="flex-1 min-w-0">
